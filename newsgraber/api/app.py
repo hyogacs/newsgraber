@@ -236,15 +236,19 @@ header{
 }
 
 /* ── Filters ── */
-.filter-bar{
+.filter-section{padding:12px 0 4px}
+.filter-row{
   display:flex;align-items:center;gap:8px;
-  padding:16px 0;overflow-x:auto;
-  -ms-overflow-style:none;scrollbar-width:none;
+  padding:6px 0;flex-wrap:wrap;
 }
-.filter-bar::-webkit-scrollbar{display:none}
+.filter-label{
+  font-size:12px;font-weight:600;color:var(--text-secondary);
+  text-transform:uppercase;letter-spacing:.05em;
+  min-width:52px;flex-shrink:0;
+}
 .chip{
   display:inline-flex;align-items:center;
-  padding:7px 16px;font-size:13px;font-weight:500;
+  padding:6px 14px;font-size:13px;font-weight:500;
   border-radius:980px;background:var(--tag-bg);
   color:var(--text-secondary);text-decoration:none;
   transition:all .2s ease;white-space:nowrap;
@@ -252,10 +256,6 @@ header{
 }
 .chip:hover{background:var(--border);color:var(--text)}
 .chip.active{background:var(--text);color:var(--bg);border-color:transparent}
-.lang-pills{
-  display:flex;gap:6px;padding-left:8px;
-  border-left:.5px solid var(--border);margin-left:8px;
-}
 
 /* ── Articles ── */
 .articles{padding:8px 0 60px;display:flex;flex-direction:column;gap:10px}
@@ -438,17 +438,23 @@ async def news_page(
           f'<div class="stat-label">{label}</div></div>')
     w("</div>")
 
-    # Filters
-    w('<div class="filter-bar">')
+    # Filters — two rows: category + language
+    w('<div class="filter-section">')
+
+    w('<div class="filter-row">')
+    w('<span class="filter-label">Category</span>')
     for cat_val, label in _CAT_LABELS.items():
         active = " active" if cat_val == category else ""
         w(f'<a href="/news{_qstr(cat=cat_val, lang=language)}" class="chip{active}">{label}</a>')
+    w("</div>")
 
-    w('<div class="lang-pills">')
+    w('<div class="filter-row">')
+    w('<span class="filter-label">Language</span>')
     for lang_val, label in _LANG_LABELS.items():
         active = " active" if lang_val == language else ""
         w(f'<a href="/news{_qstr(cat=category, lang=lang_val)}" class="chip{active}">{label}</a>')
     w("</div>")
+
     w("</div>")
 
     # Articles or empty
