@@ -4,67 +4,102 @@
 
 ## Project Overview
 
-**newsgraber** is a news aggregation/scraping project. The repository is currently in its initial bootstrapping phase with no application code yet committed.
+**newsgraber** is a Python news aggregation app that fetches today's headlines from major news sources worldwide via RSS feeds. It provides both a CLI and a web API (FastAPI) for fetching, browsing, and filtering news.
 
 - **Repository**: `hyogacs/newsgraber`
-- **Status**: Bootstrapping — no source code, build system, or dependencies have been added yet.
+- **Status**: v0.1.0 — core functionality implemented
 
 ## Repository Structure
 
 ```
 newsgraber/
-├── CLAUDE.md          # This file — AI assistant guide
-└── .git/              # Git metadata
+├── CLAUDE.md              # AI assistant guide
+├── pyproject.toml         # Project metadata, dependencies, tool config
+├── requirements.txt       # Pip requirements
+├── .env.example           # Environment variable reference
+├── .gitignore
+├── newsgraber/            # Main package
+│   ├── __init__.py
+│   ├── models.py          # Pydantic data models (Article, NewsSource, etc.)
+│   ├── config.py          # Settings via pydantic-settings + .env
+│   ├── fetcher.py         # Async RSS fetch engine (httpx + feedparser)
+│   ├── storage.py         # SQLite persistence layer (aiosqlite)
+│   ├── cli.py             # CLI interface (click + rich)
+│   ├── sources/
+│   │   ├── __init__.py
+│   │   └── registry.py    # RSS source definitions (BBC, CNN, NYT, etc.)
+│   └── api/
+│       ├── __init__.py
+│       └── app.py         # FastAPI web application
+└── tests/
+    ├── __init__.py
+    ├── test_models.py
+    ├── test_fetcher.py
+    ├── test_storage.py
+    └── test_sources.py
 ```
-
-> Update this tree as directories and files are added.
 
 ## Development Guidelines
 
 ### Git Workflow
 
-- **Default branch**: `main` (to be established with the first commit)
+- **Default branch**: `main`
 - Create feature branches from the default branch.
 - Write clear, descriptive commit messages summarizing the *why*, not just the *what*.
 - Do not force-push to shared branches.
 
-### Code Conventions (to be established)
+### Code Conventions
 
-As the project takes shape, document the following here:
+- **Language**: Python 3.10+
+- **Package manager**: pip (requirements.txt / pyproject.toml)
+- **Linting / formatting**: ruff (`ruff check .`, `ruff format .`)
+- **Type hints**: Used throughout via `from __future__ import annotations`
+- **Naming**: snake_case for files/functions/variables, PascalCase for classes
+- **Architecture**: Modular — models, fetcher engine, storage, CLI, API are separate layers
 
-- Programming language(s) and version(s)
-- Package manager and dependency installation commands
-- Linting / formatting tools and commands
-- Naming conventions (files, variables, functions, classes)
-- Project architecture patterns (MVC, modular, monorepo, etc.)
-
-### Build & Run (to be established)
+### Build & Run
 
 ```bash
 # Install dependencies
-# <add command here>
+pip install -r requirements.txt
 
-# Run the application
-# <add command here>
+# Fetch latest news (CLI)
+python -m newsgraber.cli fetch
+
+# Fetch only English news
+python -m newsgraber.cli fetch -l en
+
+# Fetch only technology news
+python -m newsgraber.cli fetch -c technology
+
+# List stored articles
+python -m newsgraber.cli list
+
+# Show configured sources
+python -m newsgraber.cli sources
+
+# Start web API server
+python -m newsgraber.cli serve
 
 # Run tests
-# <add command here>
+python -m pytest tests/ -v
 
-# Lint / format
-# <add command here>
+# Lint
+ruff check .
 ```
 
-### Testing (to be established)
+### Testing
 
-- Test framework: TBD
-- Test location: TBD
-- Coverage requirements: TBD
+- **Test framework**: pytest + pytest-asyncio
+- **Test location**: `tests/`
+- **Run**: `python -m pytest tests/ -v`
 
-### Environment & Configuration (to be established)
+### Environment & Configuration
 
-- Required environment variables: TBD
-- Configuration files: TBD
-- Secrets management: TBD
+- All settings via env vars prefixed with `NEWSGRABER_` (see `.env.example`)
+- Copy `.env.example` to `.env` and modify as needed
+- Key settings: `NEWSGRABER_DB_PATH`, `NEWSGRABER_FETCH_TIMEOUT`, `NEWSGRABER_PORT`
+- No secrets required — all news sources use public RSS feeds
 
 ## Instructions for AI Assistants
 
