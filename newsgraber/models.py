@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 from pydantic import BaseModel, Field
 
@@ -43,7 +47,7 @@ class Article(BaseModel):
     category: Category = Category.GENERAL
     language: str = "en"
     image_url: str = ""
-    fetched_at: datetime = Field(default_factory=datetime.utcnow)
+    fetched_at: datetime = Field(default_factory=_utcnow)
 
     @property
     def display_time(self) -> str:
